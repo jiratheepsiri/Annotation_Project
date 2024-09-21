@@ -11716,13 +11716,12 @@ main.flex-shrink-0 > section {
 .large-container{
   padding: 10rem;
 }
-/* .profile .profile-img {
-  height: 80vw;
-  max-height: 45rem;
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  margin-left: 100px;
-} */
+.user-profile-box {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for 3D effect */
+  padding: 10px; /* Adds padding inside the box */
+  min-width: 150px; /* Ensures a minimum width for the container */
+  text-align: center; /* Center the text inside */
+}
 
