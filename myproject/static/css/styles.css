@@ -11721,7 +11721,7 @@ main.flex-shrink-0 > section {
   border-radius: 8px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional shadow for 3D effect */
   padding: 10px; /* Adds padding inside the box */
-  min-width: 150px; /* Ensures a minimum width for the container */
-  text-align: center; /* Center the text inside */
+  min-width: 200px; /* Ensures a minimum width for the container */
+  text-align: left; /* Center the text inside */
+  /* height: 50px; */
 }
-
