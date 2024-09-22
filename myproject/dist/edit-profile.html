@@ -109,7 +109,7 @@
             </div>
             <div class="d-grid gap-3">
               <button
-                class="btn btn-light d-flex align-items-center"
+                class="btn btn-light d-flex align-items-center active"
                 type="button"
                 onclick="location.href='../dist/edit-profile.html';"
               >
@@ -152,23 +152,70 @@
                     style="
                       width: 200px;
                       height: 200px;
+                      transition: transform 0.3s;
                     "
+                    onmouseover="this.style.transform='scale(1.05)';"
+                    onmouseout="this.style.transform='scale(1)';"
                   />
                 </div>
-                <div class="text-center text-lg-start col-lg-9 pe-4">
-                  <span class="fw-medium text-white fs-5" style="color: black"
-                    >รหัสผู้ใช้: A01</span
-                  ><br />
-                  <span class="fw-medium text-white fs-5" style="color: black"
-                    >สวัสดี คงมั่นยืน</span
-                  ><br />
-                  <span class="fw-medium text-white fs-5" style="color: black"
-                    >อีเมล : veera1994@gmail.com </span
-                  ><br />
-                  <span class="fw-medium text-white fs-5" style="color: black"
-                    >เบอร์ : 095-141-4489</span
-                  >
-                </div>
+                <form class="text-center text-lg-start col-lg-9 pe-4">
+                  <div class="mb-3">
+                    <label
+                      for="userId"
+                      class="form-label text-white fs-5"
+                      style="color: black"
+                      >รหัสผู้ใช้</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="userId"
+                      value="A01"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label
+                      for="userName"
+                      class="form-label text-white fs-5"
+                      style="color: black"
+                      >ชื่อผู้ใช้</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="userName"
+                      value="คงมั่นยืน"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label
+                      for="email"
+                      class="form-label text-white fs-5"
+                      style="color: black"
+                      >อีเมล</label
+                    >
+                    <input
+                      type="email"
+                      class="form-control"
+                      id="email"
+                      value="veera1994@gmail.com"
+                    />
+                  </div>
+                  <div class="mb-3">
+                    <label
+                      for="phone"
+                      class="form-label text-white fs-5"
+                      style="color: black"
+                      >เบอร์</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="phone"
+                      value="095-141-4489"
+                    />
+                  </div>
+                </form>
               </div>
               <div class="col-lg-12 mt-4">
                 <label for="description" class="form-label text-white"
@@ -179,9 +226,11 @@
                   class="form-control"
                   rows="4"
                   style="width: 100%"
-                  disabled
                 >สวัสดีฉันชื่อวีรยาฉันมีประสบการณ์ไม่ค่อยดีเท่าไหร่กับการใช้คำพูดของคนบางกลุ่ม</textarea
                 >
+                <div class="d-flex justify-content-center">
+                  <button type="submit" class="btn btn-primary mt-4">บันทึก</button>
+                </div>
               </div>
               <div class="row mt-4 justify-content-center">
                 <div class="col-lg-6">
