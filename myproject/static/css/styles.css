@@ -13739,3 +13739,94 @@ body {
 }
 
 /*Annotate Selecting*/
+/*Selected Datasets*/
+/* Selected Datasets */
+.annotation-section {
+  background-color: #2E2E2E;
+  border: 2px solid var(--bs-brightred);
+  border-radius: 10px;
+  color: white;
+  padding: 1.5rem;
+}
+
+/* Box inside Annotation Section */
+.annotation-section .annotation-box {
+  background-color: inherit;
+}
+
+/* Table in Annotation Section */
+.annotation-section .table {
+  color: white;
+  width: 100%;
+  padding-left: 1.5rem; /* Move table content a bit to the right */
+}
+
+/* Table headers and cells */
+.annotation-section .table th,
+.annotation-section .table td {
+  border: none;
+  padding: 0.75rem 1rem; /* Adjust padding for better spacing */
+}
+
+/* Column Alignment */
+.annotation-section .table th:first-child,
+.annotation-section .table td:first-child {
+  padding-left: 2rem; /* Shift the first column (ข้อความ) more to the right */
+}
+
+/* Styling for Annotate Button */
+.annotation-section .btn-annotate {
+  background-color: #DDA5F5;
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.annotation-section .btn-annotate:hover {
+  background-color: #BB87D1;
+}
+
+/* Secondary Button (for ย่อการแสดงผล) */
+.annotation-section .btn-secondary {
+  background-color: #FF8ACC;
+  border: none;
+  border-radius: 20px;
+  padding: 0.4rem 1rem;
+}
+
+.annotation-section .btn-secondary:hover {
+  background-color: #E67FBA;
+}
+
+/* Styling for Headers and Bold Text */
+.annotation-section .fw-bold {
+  font-weight: bold;
+}
+
+.annotation-section p {
+  margin: 0;
+}
+
+/* Aligning Text and Button in the Same Row */
+.annotation-section .annotation-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Responsive behavior */
+@media (max-width: 768px) {
+  .annotation-section .annotation-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .annotation-section .annotation-button {
+    text-align: left;
+    width: 100%;
+  }
+}
+/*Selected Datasets*/
