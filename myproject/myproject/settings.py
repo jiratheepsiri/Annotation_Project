@@ -55,7 +55,7 @@ ROOT_URLCONF = 'myproject.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'dist'],
           # Ensure this directory is correct
         'APP_DIRS': True,
         'OPTIONS': {
@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'annotation',
         'USER': 'root',
-        'PASSWORD': 'admin123456789',
+        'PASSWORD': 'Admin123456789',
         'HOST': '127.0.0.1',  # or '127.0.0.1'
         'PORT': '3306',       # default MySQL port
     }
