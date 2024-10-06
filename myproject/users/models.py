@@ -11,7 +11,7 @@ class user_map(models.Model):
     
     class Meta:
         db_table = 'user'  # กำหนดชื่อตารางเป็น 'user'
-        managed = False
+        managed = True
 
 class Users(models.Model):
     user_id = models.CharField(max_length=10, unique=True, primary_key=True,db_column='user_id') # Field for user_id

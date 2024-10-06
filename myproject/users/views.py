@@ -58,8 +58,8 @@ def txtverify(request):
     return render(request, 'txtverify.html')
 def txtverifyFile(request):
     return render(request, 'txtverifyFile.html')
+
 def registration(request):
-    
     if request.method == 'POST':
         username = request.POST.get('username')
         email = request.POST.get('email')
@@ -70,15 +70,38 @@ def registration(request):
 
         # Check if the passwords match
         if password != confirm_password:
-            messages.error(request, "รหัสผ่านไม่ตรงกัน")
-            return render(request, 'registration.html')
-        
+            return render(request, 'registration.html', {
+                'error_message': "รหัสผ่านไม่ตรงกัน",
+                'success_message': None
+            })
+
         # Check if the emails match
         if email != confirm_email:
-            messages.error(request, "อีเมลไม่ตรงกัน")
-            return render(request, 'registration.html')
+            return render(request, 'registration.html', {
+                'error_message': "อีเมลไม่ตรงกัน",
+                'success_message': None
+            })
 
-        user_id = generate_user_id()
+        # Check if username, email, or telephone number already exists
+        if user_map.objects.filter(username=username).exists():
+            return render(request, 'registration.html', {
+                'error_message': "ชื่อผู้ใช้นี้มีอยู่แล้ว",
+                'success_message': None
+            })
+
+        if user_map.objects.filter(email=email).exists():
+            return render(request, 'registration.html', {
+                'error_message': "อีเมลนี้มีอยู่แล้ว",
+                'success_message': None
+            })
+
+        if user_map.objects.filter(tel=tel).exists():
+            return render(request, 'registration.html', {
+                'error_message': "หมายเลขโทรศัพท์นี้มีอยู่แล้ว",
+                'success_message': None
+            })
+
+        user_id = generate_user_id()  # Replace with your user ID generation logic
 
         # Hash the password
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
@@ -88,14 +111,19 @@ def registration(request):
             user_id=user_id,
             username=username,
             email=email,
-            password=hashed_password.decode('utf-8'),  # Store the hashed password as a string
+            password=hashed_password.decode('utf-8'),
             tel=tel
         )
         new_entry.save()
-        messages.success(request, "สมัครสมาชิกเรียบร้อยแล้ว")
-        return redirect('login')
-     
-    return render(request, 'registration.html')
+        return render(request, 'registration.html', {
+            'error_message': None,
+            'success_message': "สมัครสมาชิกเรียบร้อยแล้ว"
+        })
+
+    return render(request, 'registration.html', {
+        'error_message': None,
+        'success_message': None
+    })
 
 
 def generate_user_id():
