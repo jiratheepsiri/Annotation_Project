@@ -14,30 +14,25 @@ def login(request):
     msg = None
 
     if request.method == 'POST':
-        print("POST Data:", request.POST)
-
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        print(f"Username: {username}, Password: {password}")
-
-        if username is None or password is None:
+        if not username or not password:  # Check for None or empty strings
             msg = "Both fields are required."
-            print(msg)
-        else:
-            try:
-                user = Users.objects.get(username=username)
-                # Check hashed password
-                if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                    # Log the user in
-                    print(f"User {username} logged in successfully.")
-                    return redirect('/mainlogin')
-                else:
-                    msg = 'Error Login: Invalid password'
-                    print(msg)
-            except Users.DoesNotExist:
-                msg = 'Error Login: User does not exist'
-                print(msg)
+            return render(request, 'login.html', {'error_message': msg, 'success_message': None})
+
+        try:
+            user = Users.objects.get(username=username)
+            # Check hashed password
+            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+                # Log the user in (add your login logic here)
+                return redirect('/mainlogin')
+            else:
+                msg = "ชื่อผู้ใช้หรือรหัสผ่านของคุณไม่ถูกต้อง"  # Invalid password message
+        except Users.DoesNotExist:
+            msg = "ชื่อผู้ใช้หรือรหัสผ่านของคุณไม่ถูกต้อง"  # User does not exist message
+
+        return render(request, 'login.html', {'error_message': msg, 'success_message': None})
 
     return render(request, 'login.html', {'msg': msg})
 
@@ -112,7 +107,8 @@ def registration(request):
             username=username,
             email=email,
             password=hashed_password.decode('utf-8'),
-            tel=tel
+            tel=tel,
+            user_role="user"
         )
         new_entry.save()
         return render(request, 'registration.html', {

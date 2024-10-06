@@ -81,7 +81,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'annotation',
         'USER': 'root',
-        'PASSWORD': 'Admin123456789',
+        'PASSWORD': 'Bananagood12',
         'HOST': '127.0.0.1',  # or '127.0.0.1'
         'PORT': '3306',       # default MySQL port
     }
