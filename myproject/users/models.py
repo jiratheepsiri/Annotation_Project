@@ -8,6 +8,7 @@ class user_map(models.Model):
     email = models.EmailField(max_length=255, unique=True,db_column='user_email')
     password = models.CharField(max_length=255,db_column='user_pwd')
     tel = models.CharField(max_length=10,db_column='user_tel')
+    user_role = models.CharField(max_length=10,db_column='user_role')
     
     class Meta:
         db_table = 'user'  # กำหนดชื่อตารางเป็น 'user'
