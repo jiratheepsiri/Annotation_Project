@@ -21,12 +21,11 @@
   <link href="../static/css/styles.css" rel="stylesheet" />
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column">
   <main class="flex-shrink-0">
-    <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-light py-3 bg-greydarker">
       <div class="container px-5">
-        <a class="navbar-brand" href="index.html">
+        <a class="navbar-brand" href="{% url 'index' %}">
           <span class="fw-bolder border-rounded" style="color: black">
             ระบบการกำกับข้อความเชิงบูลลี่ภาษาไทย
           </span>
@@ -38,13 +37,13 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
             <li class="nav-item">
-              <a class="nav-link nav-box" href="../dist/index.html">หน้าแรก</a>
+              <a class="nav-link" href="{% url 'index' %}">หน้าแรก</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../dist/registration.html">สมัครสมาชิก</a>
+              <a class="nav-link" href="{% url 'registration' %}">สมัครสมาชิก</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="../dist/login.html">เข้าสู่ระบบ</a>
+              <a class="nav-link" href="{% url 'login' %}">เข้าสู่ระบบ</a>
             </li>
           </ul>
         </div>
@@ -67,7 +66,7 @@
                   Machine Learning</span>
               </h1>
               <div class="d-grid gap-3 d-sm-flex justify-content-center justify-content-xxl-start mb-3">
-                <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="registration.html">เริ่มต้นใช้งาน</a>
+                <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="/registration">เริ่มต้นใช้งาน</a>
               </div>
             </div>
           </div>
@@ -110,7 +109,7 @@
                   style="color: var(--bs-gray-400); font-size: 0.8rem">เป็นขั้นตอนการกำกับหรือใส่ป้ายชื่อ(Label)ให้กับข้อความเพื่อให้คอมพิวเตอร์เข้าใจถึงความหมายของข้อความนั้นๆและช่วยให้คอมพิวเตอร์สามารถตีความได้ง่ายขึ้นเพิ่อนำไปฝึกสอนโมเดลสำหรับการวิเคราะห์ข้อความเชิงบูลลี่</span>
               </h1>
               <div class="d-grid gap-3 d-sm-flex justify-content-center justify-content-xxl-start mb-3">
-                <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="login.html">กำกับข้อความ</a>
+                <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="{% url 'login' %}">กำกับข้อความ</a>
               </div>
             </div>
           </div>
@@ -134,7 +133,7 @@
               </h1>
               <div class="d-grid gap-3 d-sm-flex justify-content-center justify-content-xxl-start mb-3">
                 <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder"
-                  href="login.html">วิเคราะห์ข้อความ</a>
+                  href="{% url 'login' %}">วิเคราะห์ข้อความ</a>
               </div>
             </div>
           </div>
@@ -175,7 +174,7 @@
                   style="color: var(--bs-gray-400); font-size: 0.8rem">เป็นการให้ผู้ใช้เสนอข้อความที่ผู้ใช้คิดว่าเป็นข้อความเชิงบูลลี่เพื่อให้ผู้ดูแลระบบนำข้อความไปกำกับข้อความเพื่อพัฒนาโมเดลต่อไป</span>
               </h1>
               <div class="d-grid gap-3 d-sm-flex justify-content-center justify-content-xxl-start mb-3">
-                <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="login.html">เสนอข้อความ</a>
+                <a class="btn btn-primary btn-lg px-5 py-3 me-sm-3 fs-6 fw-bolder" href="{% url 'login' %}">เสนอข้อความ</a>
               </div>
             </div>
           </div>
