@@ -11,6 +11,7 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 import pytz
+import uuid
 
 
 
@@ -67,27 +68,57 @@ def forgotpass(request):
     return render(request, 'forgotpass.html')
 
 def texttopost(request):
-    if request.method == 'POST':
-        user_proposed_text = request.POST.get('user_proposed_text')
-        if user_proposed_text:  # Check if the text is not empty
-            # Create and save the ProposedText instance
-            new_entry = ProposedText(
-                proposed_t_user_id=request.user,
-                user_proposed_text=user_proposed_text,
-                word_status='awaiting'
+    if request.user.is_authenticated:
+        if request.method == 'POST':
+            proposed_text = request.POST.get('user_proposed_text', '').strip()  # Get input and strip whitespace
+            word_class_str = request.POST.get('word_class', '0')  # Default to '0'
+
+            # Validate word_class input
+            word_class = int(word_class_str) if word_class_str.isdigit() else 0  # Safely convert to int
+
+            if not proposed_text:  # Check if proposed_text is empty
+                # You can add an error message or handle it as needed
+                error_message = "กรุณากรอกคำที่คุณคิดว่าเป็นการบูลลี่ทางไซเบอร์"  # Example message in Thai
+                return render(request, 'accounts/texttopost.html', {
+                    'username': request.user.username,
+                    'error_message': error_message,
+                })
+
+            text_id = generate_text_id()  # Generate the unique text_id
+
+            bully_text = ProposedText(
+                user=request.user,
+                text_id=text_id,
+                proposed_text=proposed_text,
+                word_class=word_class,
+                proposed_t_admin_id=None,  # Allowing NULL value
             )
-            return redirect('/mainlogin')  # Redirect to your success page
 
-        # If text is empty, render the form again with an error message
-        else:
-            msg = "Please enter some text."
-            return render(request, 'texttopost.html', {'error_message': msg})
+            try:
+                bully_text.save()  # Attempt to save the proposed text
+                return redirect('texttopost')
+            except Exception as e:
+                # Log the exception or handle it as needed
+                error_message = f"An error occurred while saving: {str(e)}"
+                return render(request, 'accounts/texttopost.html', {
+                    'username': request.user.username,
+                    'error_message': error_message,
+                })
 
-    return render(request, 'texttopost.html')
-
+        return render(request, 'accounts/texttopost.html', {
+            'username': request.user.username,
+        })
+    else:
+        return redirect('login')
 
 def texttopostFile(request):
-    return render(request, 'texttopostFile.html')
+    if request.user.is_authenticated:  # This works if you add is_authenticated property in Users model
+        print(f"Authenticated user: {request.user.username}")  # Debugging line
+        return render(request, 'accounts/texttopostFile.html', {
+            'username': request.user.username,
+        })
+    else:
+        return redirect('login')  # Redirect to login page if not authenticated
 def txtverify(request):
     return render(request, 'txtverify.html')
 def txtverifyFile(request):
@@ -168,3 +199,9 @@ def generate_user_id():
     # สร้างเลข user_id โดยต่อเลข 164 กับลำดับที่มีความยาว 7 หลัก
     user_id = f"164{count:07d}"  # เช่น 1640000001, 1640000002
     return user_id
+
+def generate_text_id():
+    count = ProposedText.objects.count() + 1  # Start counting from 1
+    text_id = f"201{count:07d}"  # Generate ID in the format 2010000001, etc.
+    return text_id
+

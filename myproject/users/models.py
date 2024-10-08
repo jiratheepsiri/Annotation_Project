@@ -3,6 +3,7 @@ from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 import bcrypt
+import uuid
 
 class user_map(models.Model):
     user_id = models.CharField(max_length=10, unique=True, primary_key=True) # Field for user_id
@@ -38,20 +39,23 @@ class Users(models.Model):
 
     def __str__(self):
         return self.username
+    
 
 class ProposedText(models.Model):
-    text_id = models.AutoField( unique=True, primary_key=True, db_column='text_id')
-    propose_t_admin_id = models.CharField(max_length=10, db_column='propose_t_admin_id')
-    proposed_t_user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
-    propose_t_uploaded_id = models.CharField(max_length=10, db_column='propose_t_uploaded_id')
-    uploaded_id = models.CharField(max_length=10, db_column='uploaded_id')
-    user_proposed_text = models.TextField(max_length=255, db_column='word_text')
-    word_status = models.CharField(max_length=15, db_column='word_status', default='รออนุมัติ')
-    word_class = models.CharField(max_length=16, db_column='word_class')
-    word_class_type = models.CharField(max_length=20, db_column='word_class_type')
+    text_id = models.CharField(max_length=10, unique=True, primary_key=True, db_column='text_id')  # Auto-incrementing integer
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    proposed_text = models.TextField(max_length=255, db_column='word_text')
+    word_class = models.SmallIntegerField(db_column='word_class', default=0)
+    uploaded_id = models.UUIDField(max_length=25,default=uuid.uuid4, editable=False, unique=True)  # Auto-generate UUID
+    proposed_t_admin_id = models.CharField(max_length=10, db_column='proposed_t_admin_id', null=True, blank=True)
+    # Add other fields as necessary
 
     class Meta:
-        db_table = 'proposed_text'  # Use your desired table name in MySQL
+        db_table = 'proposed_text'
         managed = True
+
+    def __str__(self):
+        return self.proposed_text 
+    
 
 
