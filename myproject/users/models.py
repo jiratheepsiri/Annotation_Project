@@ -46,8 +46,9 @@ class ProposedText(models.Model):
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     proposed_text = models.TextField(max_length=255, db_column='word_text')
     word_class = models.SmallIntegerField(db_column='word_class', default=0)
+    word_status = models.CharField(db_column="word_status",max_length=30, null=True, blank=True, default="รออนุมัติ")
     uploaded_id = models.UUIDField(max_length=25,default=uuid.uuid4, editable=False, unique=True)  # Auto-generate UUID
-    proposed_t_admin_id = models.CharField(max_length=10, db_column='proposed_t_admin_id', null=True, blank=True)
+    proposed_t_admin_id = models.CharField(max_length=10, db_column='admin_id', null=True, blank=True)
     # Add other fields as necessary
 
     class Meta:

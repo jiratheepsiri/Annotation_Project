@@ -38,10 +38,10 @@
                   class="navbar-toggler-icon"></span></button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
               <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-                  <li class="nav-item"><a class="nav-link nav-box" href="{% url 'mainlogin' %}">หน้าแรก</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'mainlogin' %}">หน้าแรก</a></li>
                   <li class="nav-item"><a class="nav-link" href="{% url 'annotatepage' %}">กำกับข้อความ</a></li>
                   <li class="nav-item"><a class="nav-link" href="{% url 'txtverify' %}">วิเคราะห์ข้อความ</a></li>
-                  <li class="nav-item"><a class="nav-link" href="{% url 'texttopost' %}">เสนอข้อความ</a></li>
+                  <li class="nav-item"><a class="nav-link nav-box" href="{% url 'texttopost' %}">เสนอข้อความ</a></li>
               </ul>
               <div class="user-profile-box m-lg-0 py-1">
                   <div class="d-inline-flex align-items-center">
@@ -69,7 +69,7 @@
 
             <!-- Toggle Buttons -->
             <div class="d-flex justify-content-left mb-3">
-              <a href="texttopost.html" class="btn btn-toggle text-white">ข้อความ</a>
+              <a href="{% url 'texttopost' %}" class="btn btn-toggle text-white">ข้อความ</a>
               <button id="text-input-btn" class="btn btn-toggle bg-white me-2 rounded-pill">
                 ไฟล์ข้อมูล
               </button>
@@ -77,16 +77,20 @@
 
             <!-- File Input Section -->
             <div id="file-input-section" class="form-container">
-              <form id="file-form2">
+              <form id="file-form2" enctype="multipart/form-data" method="post" action="{% url 'texttopostFile' %}">
+                {% csrf_token %}
                 <div class="mb-3">
-                  <label for="file-upload" class="form-label text-white">โปรดอัปโหลดไฟล์ (รองรับเฉพาะ .csv หรือ
-                    .xml)</label>
-                  <input type="file" class="form-control" id="file-upload2" accept=".csv, .xml" />
+                  <label for="file-upload" class="form-label text-white">โปรดอัปโหลดไฟล์ (รองรับเฉพาะ .csv หรือ .xml)</label>
+                  <input type="file" class="form-control" id="file-upload2" name="file" accept=".csv, .xml" required />
                 </div>
-                <button id="submit-file-btn" type="submit" class="btn btn-success">
-                  ส่งไฟล์
-                </button>
+                {% if error_message %}
+                <div class="alert alert-danger" role="alert">
+                  {{ error_message }}
+                </div>
+                {% endif %}
+                <button id="submit-file-btn" type="submit" class="btn btn-success">ส่งไฟล์</button>
               </form>
+              
 
               <!-- Example Files Section -->
               <div class="container mt-5">

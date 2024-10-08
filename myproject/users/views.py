@@ -12,6 +12,8 @@ from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 import pytz
 import uuid
+import os
+from django.core.exceptions import ValidationError
 
 
 
@@ -72,7 +74,7 @@ def texttopost(request):
         if request.method == 'POST':
             proposed_text = request.POST.get('user_proposed_text', '').strip()  # Get input and strip whitespace
             word_class_str = request.POST.get('word_class', '0')  # Default to '0'
-
+            word_status = request.POST.get('word_status','รออนุมัติ')
             # Validate word_class input
             word_class = int(word_class_str) if word_class_str.isdigit() else 0  # Safely convert to int
 
@@ -91,6 +93,7 @@ def texttopost(request):
                 text_id=text_id,
                 proposed_text=proposed_text,
                 word_class=word_class,
+                word_status=word_status,
                 proposed_t_admin_id=None,  # Allowing NULL value
             )
 
@@ -112,13 +115,45 @@ def texttopost(request):
         return redirect('login')
 
 def texttopostFile(request):
-    if request.user.is_authenticated:  # This works if you add is_authenticated property in Users model
+    if request.user.is_authenticated:
         print(f"Authenticated user: {request.user.username}")  # Debugging line
+
+        if request.method == 'POST':
+            uploaded_file = request.FILES.get('file')  # Get the uploaded file
+            
+            if uploaded_file:
+                # Get the file extension
+                file_extension = os.path.splitext(uploaded_file.name)[1].lower()
+                
+                # Check if the file extension is either .csv or .xml
+                if file_extension not in ['.csv', '.xml']:
+                    error_message = "ไฟล์ที่อัปโหลดต้องเป็น .csv หรือ .xml เท่านั้น"  # Error message in Thai
+                    return render(request, 'accounts/texttopostFile.html', {
+                        'username': request.user.username,
+                        'error_message': error_message,
+                    })
+
+                # Process the file (e.g., save it, read contents, etc.)
+                # Your file processing logic here
+                
+                # Optionally, redirect to a success page
+                return redirect('success_page')  # Change this to your success URL or view
+
+            else:
+                error_message = "โปรดเลือกไฟล์เพื่ออัปโหลด"  # Error message for no file selected
+                return render(request, 'accounts/texttopostFile.html', {
+                    'username': request.user.username,
+                    'error_message': error_message,
+                })
+
         return render(request, 'accounts/texttopostFile.html', {
             'username': request.user.username,
         })
+
     else:
         return redirect('login')  # Redirect to login page if not authenticated
+    
+    
 def txtverify(request):
     return render(request, 'txtverify.html')
 def txtverifyFile(request):
