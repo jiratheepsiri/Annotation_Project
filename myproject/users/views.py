@@ -1,52 +1,91 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate,login
 from django.db import connection
+from django.contrib.auth import login as auth_login
 from django.contrib import messages
-from .models import user_map, Users
+from .models import user_map, Users, ProposedText
 import bcrypt  # Import bcrypt for password hashing
 from django.contrib.auth.hashers import check_password
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+import pytz
+
 
 
 def index(request):
     return render(request, 'index.html')  # แสดงหน้า home.html
 
-def login(request):
+
+
+def login_view(request):
     msg = None
 
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        if not username or not password:  # Check for None or empty strings
+        print(f"Attempting login for username: {username}")
+
+        if not username or not password:
             msg = "Both fields are required."
-            return render(request, 'login.html', {'error_message': msg, 'success_message': None})
+            return render(request, 'login.html', {'error_message': msg})
 
-        try:
-            user = Users.objects.get(username=username)
-            # Check hashed password
-            if bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                # Log the user in (add your login logic here)
-                return redirect('/mainlogin')
-            else:
-                msg = "ชื่อผู้ใช้หรือรหัสผ่านของคุณไม่ถูกต้อง"  # Invalid password message
-        except Users.DoesNotExist:
-            msg = "ชื่อผู้ใช้หรือรหัสผ่านของคุณไม่ถูกต้อง"  # User does not exist message
+        # Specify the backend to use
+        user = authenticate(request, username=username, password=password, backend='users.backends.CustomUserBackend')
 
-        return render(request, 'login.html', {'error_message': msg, 'success_message': None})
+        if user is not None:
+            user.last_login = timezone.now()  # Update last_login
+            user.save()  # Save the user instance with the updated last_login
+            login(request, user)  # Log the user in
+            return redirect('accounts/mainlogin')  # Redirect to your desired page
+        else:
+            print("Invalid username or password.")
+            msg = "Invalid username or password."
+
+        return render(request, 'login.html', {'error_message': msg})
 
     return render(request, 'login.html', {'msg': msg})
 
 
-
 def mainlogin(request):
-    return render(request, 'mainlogin.html')
+    if request.user.is_authenticated:  # This works if you add is_authenticated property in Users model
+        print(f"Authenticated user: {request.user.username}")  # Debugging line
+        return render(request, 'accounts/mainlogin.html', {
+            'username': request.user.username,
+        })
+    else:
+        return redirect('login')  # Redirect to login page if not authenticated
 
 def annotatepage(request):
     return render(request, 'annotatepage.html')
+
+def annotateselect(request):
+    return render(request, 'annotateselect.html')
 def forgotpass(request):
     return render(request, 'forgotpass.html')
+
 def texttopost(request):
+    if request.method == 'POST':
+        user_proposed_text = request.POST.get('user_proposed_text')
+        if user_proposed_text:  # Check if the text is not empty
+            # Create and save the ProposedText instance
+            new_entry = ProposedText(
+                proposed_t_user_id=request.user,
+                user_proposed_text=user_proposed_text,
+                word_status='awaiting'
+            )
+            return redirect('/mainlogin')  # Redirect to your success page
+
+        # If text is empty, render the form again with an error message
+        else:
+            msg = "Please enter some text."
+            return render(request, 'texttopost.html', {'error_message': msg})
+
     return render(request, 'texttopost.html')
+
+
 def texttopostFile(request):
     return render(request, 'texttopostFile.html')
 def txtverify(request):

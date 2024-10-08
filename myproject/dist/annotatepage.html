@@ -37,18 +37,12 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-            <li class="nav-item">
-              <a class="nav-link" href="mainlogin.html">หน้าแรก</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link nav-box" href="../dist/annotatepage.html">กำกับข้อความ</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../dist/txtverify.html">วิเคราะห์ข้อความ</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="../dist/texttopost.html">เสนอข้อความ</a>
-            </li>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
+              <li class="nav-item"><a class="nav-link" href="{% url 'mainlogin' %}">หน้าแรก</a></li>
+              <li class="nav-item"><a class="nav-link nav-box" href="{% url 'annotatepage' %}">กำกับข้อความ</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'txtverify' %}">วิเคราะห์ข้อความ</a></li>
+              <li class="nav-item"><a class="nav-link" href="{% url 'texttopost' %}">เสนอข้อความ</a></li>
+          </ul>
           </ul>
           <div class="user-profile-box m-lg-0 py-1">
             <div class="d-inline-flex align-items-center">
@@ -113,7 +107,7 @@
             <!-- Button aligned to the right -->
             <div class="d-flex justify-content-end mt-4">
               <a class="btn btn-primary btn-sm rounded-pill px-3 py-2 fs-6 fw-bolder"
-                href="../dist/annotateselect.html">เริ่มการกำกับ</a>
+                href="{% url 'annotateselect' %}">เริ่มการกำกับ</a>
             </div>
           </div>
         </div>

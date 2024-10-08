@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +27,6 @@ SECRET_KEY = 'django-insecure-i$fy7=2o*lb6ypm8_pss=v=zyngqr1!17b6g!(9u1!=vifrzz$
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -48,6 +48,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'myproject.urls'
@@ -87,6 +88,9 @@ DATABASES = {
     }
 }
 
+AUTHENTICATION_BACKENDS = [
+    'users.backends.CustomUserBackend',  # Update this to the correct path  # Keep this if you want to use Django's User model as well
+]
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -112,7 +116,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Bangkok'
 
 USE_I18N = True
 
@@ -124,8 +128,15 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 # เพิ่มเติมนี้ถ้าโฟลเดอร์ static อยู่ภายนอกแอป
-STATICFILES_DIRS = [BASE_DIR / "static"]
+STATICFILES_DIRS = [
+    BASE_DIR / "static",  # Existing static directory
+    os.path.join(BASE_DIR, 'dist/accounts'),
+    ]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/login/'  # URL for login
+LOGIN_REDIRECT_URL = '/accounts/mainlogin/'  # Redirect after login
+
