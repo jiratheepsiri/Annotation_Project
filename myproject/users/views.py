@@ -11,9 +11,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-import pytz
-import uuid
-import os
+import xml.etree.ElementTree as ET
+from django.db import transaction, IntegrityError
 from django.utils.timezone import now
 from django.http import HttpResponse
 from django.core.exceptions import ValidationError
@@ -133,83 +132,151 @@ def texttopost(request):
 def texttopostFile(request):
     if request.user.is_authenticated:
         if request.method == 'POST' and request.FILES.get('file'):
-            uploaded_file = request.FILES['file']
+            upload_file = request.FILES['file']
             user = request.user._wrapped if hasattr(request.user, '_wrapped') else request.user
             
-            file_name = uploaded_file.name
-            file_type = uploaded_file.content_type.split('/')[-1]  
-            file_size = float(uploaded_file.size)  
-            uploaded_id = generate_upload_id()
+            file_name = upload_file.name
+            file_type = upload_file.content_type.split('/')[-1]  
+            file_size = float(upload_file.size)  
+            upload_id = generate_upload_id()
             
             try:
                 # Create ProposedFile instance first
                 proposed_file = ProposedFile.objects.create(
-                    upload_id=uploaded_id,
+                    upload_id=upload_id,
                     file_name=file_name,
                     file_type=file_type,
                     user=user,
                     file_size=file_size,
-                    file_data=uploaded_file.read(),
+                    file_data=upload_file.read(),
                     uploaded_date=now(),
-                    file_path=uploaded_file.name
+                    file_path=upload_file.name
                 )
 
-                uploaded_file.seek(0)  # Go back to the beginning of the file
-                csv_reader = csv.reader(uploaded_file.read().decode('utf-8').splitlines())
-                next(csv_reader)  # Skip the header
+                upload_file.seek(0)  # Go back to the beginning of the file
 
-                existing_ids = ProposedText.objects.values_list('text_id', flat=True)
-                existing_ids = set(str(text_id) for text_id in existing_ids)
-
+                existing_ids = set(str(text_id) for text_id in ProposedText.objects.values_list('text_id', flat=True))
                 max_count = max((int(text_id[3:]) for text_id in existing_ids if text_id.startswith("201")), default=0)
-                print(f"existing id{existing_ids}")
-                for row in csv_reader:
-                    existing_ids = ProposedText.objects.values_list('text_id', flat=True)
-                    print(f"existing id{existing_ids}")
-                    existing_ids = set(str(text_id) for text_id in existing_ids)
-                    print(f"existing id{existing_ids}")
-                    max_count = max((int(text_id[3:]) for text_id in existing_ids if text_id.startswith("201")), default=0)
-                    print(f"max_count{max_count}")
-                    if len(row) < 3:  # Check if row has enough columns
-                        continue
 
-                    word = row[0]  
-                    word_class_value = row[1].strip()
-                    if not word_class_value:  
-                        print(f"Invalid word_class value: empty - skipping this row: {row}")
-                        continue
-                    
-                    try:
-                        word_class = int(word_class_value)  
-                    except ValueError:
-                        print(f"Invalid word_class value: {word_class_value} - skipping this row: {row}")
-                        continue
+                print(f"Starting max_count: {max_count}")
+                print(f"Existing IDs: {existing_ids}")
 
-                    word_class_type = row[2]  
+                if upload_file.name.endswith('.csv'):
+                    csv_reader = csv.reader(upload_file.read().decode('utf-8').splitlines())
+                    next(csv_reader)  # Skip the header
+                    for row in csv_reader:
+                        if len(row) < 3:  # Check if row has enough columns
+                            print(f"Skipping row due to insufficient columns: {row}")
+                            continue
 
-                    max_count += 1
-                    text_id = f"201{max_count:07d}"
+                        word = row[0].strip()  # Ensure word is stripped of whitespace
+                        word_class_value = row[1].strip()
+                        word_class_type = row[2].strip()
 
-                    # Ensure the generated text_id is unique
-                    while text_id in existing_ids:
-                        max_count += 1
-                        text_id = f"201{max_count:07d}"
+                        if not word_class_value:  
+                            print(f"Invalid word_class value: empty - skipping this row: {row}")
+                            continue
+                        
+                        try:
+                            word_class = int(word_class_value)  # Convert to integer
+                        except ValueError:
+                            print(f"Invalid word_class value: {word_class_value} - skipping this row: {row}")
+                            continue
 
-                    # Check for duplicate ProposedText before creating
-                    if ProposedText.objects.filter(upload_id=proposed_file, text_id=text_id).exists():
-                        print(f"Entry with upload_id {proposed_file.upload_id} and text_id {text_id} already exists.")
-                        continue  
+                        # Unique ID generation loop
+                        while True:
+                            max_count += 1
+                            text_id = f"201{max_count:07d}"
 
-                    proposed_text = ProposedText.objects.create(
-                        user=user,
-                        proposed_text=word,
-                        word_class=word_class,
-                        word_status="รออนุมัติ",
-                        word_class_type=word_class_type,
-                        text_id=text_id,
-                        upload_id=proposed_file  
-                    )
-                
+                            # Check for uniqueness before attempting insertion
+                            if text_id not in existing_ids:
+                                print(f"Generated unique text_id: {text_id}")
+                                break  # Exit while loop if unique
+                            else:
+                                print(f"Generated text_id {text_id} already exists. Regenerating...")
+
+                        try:
+                            with transaction.atomic():  # Ensure atomicity
+                                # Check again for existing text_id before creating
+                                if ProposedText.objects.filter(text_id=text_id).exists():
+                                    print(f"Duplicate entry for text_id {text_id} found before insert - skipping this row.")
+                                    continue  # Skip if it exists
+
+                                # Create ProposedText entry
+                                ProposedText.objects.create(
+                                    user=user,
+                                    proposed_text=word,
+                                    word_class=word_class,
+                                    word_status="รออนุมัติ",
+                                    word_class_type=word_class_type,
+                                    text_id=text_id,
+                                    upload_id=proposed_file  # Make sure you're passing the instance here
+                                )
+                                print(f"Successfully created ProposedText with text_id: {text_id}")
+
+                        except IntegrityError as e:
+                            print(f"Error inserting text_id {text_id}: {e}")
+                            continue  # Skip this entry if a duplicate text_id is found
+
+                elif upload_file.name.endswith('.xml'):
+                    xml_data = upload_file.read()
+                    root = ET.fromstring(xml_data)
+
+                    for row in root.findall('row'):
+                        word_elem = row.find('ข้อความ')
+                        word_class_elem = row.find('เป็นคำบูลลี่หรือไม่_ไม่เป็น_0_เป็น_1')
+                        word_class_type_elem = row.find('ประเภทของคำบูลลี่')
+
+                        # Safely get the text or use a default value if None
+                        word = word_elem.text.strip() if word_elem is not None and word_elem.text else ''
+                        word_class_value = word_class_elem.text.strip() if word_class_elem is not None and word_class_elem.text else ''
+                        word_class_type = word_class_type_elem.text.strip() if word_class_type_elem is not None and word_class_type_elem.text else ''
+
+                        if not word_class_value:  
+                            print(f"Invalid word_class value: empty - skipping this row: {row}")
+                            continue
+
+                        try:
+                            word_class = int(word_class_value)  # Convert to integer
+                        except ValueError:
+                            print(f"Invalid word_class value: {word_class_value} - skipping this row: {row}")
+                            continue
+
+                        # Unique ID generation loop
+                        while True:
+                            max_count += 1
+                            text_id = f"201{max_count:07d}"
+
+                            # Check for uniqueness before attempting insertion
+                            if text_id not in existing_ids:
+                                print(f"Generated unique text_id: {text_id}")
+                                break  # Exit while loop if unique
+                            else:
+                                print(f"Generated text_id {text_id} already exists. Regenerating...")
+
+                        try:
+                            with transaction.atomic():  # Ensure atomicity
+                                # Check again for existing text_id before creating
+                                if ProposedText.objects.filter(text_id=text_id).exists():
+                                    print(f"Duplicate entry for text_id {text_id} found before insert - skipping this row.")
+                                    continue  # Skip if it exists
+
+                                # Create ProposedText entry
+                                ProposedText.objects.create(
+                                    user=user,
+                                    proposed_text=word,
+                                    word_class=word_class,
+                                    word_status="รออนุมัติ",
+                                    word_class_type=word_class_type,
+                                    text_id=text_id,
+                                    upload_id=proposed_file  # Make sure you're passing the instance here
+                                )
+                                print(f"Successfully created ProposedText with text_id: {text_id}")
+
+                        except IntegrityError as e:
+                            print(f"Error inserting text_id {text_id}: {e}")
+                            continue  # Skip this entry if a duplicate text_id is found
+
                 return redirect("texttopostFile")
                 
             except Exception as e:
@@ -222,6 +289,7 @@ def texttopostFile(request):
     return render(request, 'accounts/texttopostFile.html', {
         'username': request.user.username,
     })
+
 
 
 
