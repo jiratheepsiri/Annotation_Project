@@ -4,6 +4,9 @@ from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import User
 import bcrypt
 import uuid
+import os
+from django.utils.timezone import now
+from django.core.exceptions import ValidationError
 
 class user_map(models.Model):
     user_id = models.CharField(max_length=10, unique=True, primary_key=True) # Field for user_id
@@ -42,21 +45,36 @@ class Users(models.Model):
     
 
 class ProposedText(models.Model):
-    text_id = models.CharField(max_length=10, unique=True, primary_key=True, db_column='text_id')  # Auto-incrementing integer
+    text_id = models.CharField(max_length=25, unique=True, primary_key=True, db_column='text_id')
     user = models.ForeignKey(Users, on_delete=models.CASCADE)
     proposed_text = models.TextField(max_length=255, db_column='word_text')
     word_class = models.SmallIntegerField(db_column='word_class', default=0)
-    word_status = models.CharField(db_column="word_status",max_length=30, null=True, blank=True, default="รออนุมัติ")
-    uploaded_id = models.UUIDField(max_length=25,default=uuid.uuid4, editable=False, unique=True)  # Auto-generate UUID
-    proposed_t_admin_id = models.CharField(max_length=10, db_column='admin_id', null=True, blank=True)
-    # Add other fields as necessary
+    word_status = models.CharField(db_column="word_status", max_length=30, null=True, blank=True, default="รออนุมัติ")
+    upload_id = models.ForeignKey('ProposedFile', on_delete=models.CASCADE, db_column='uploaded_id')  # ForeignKey to ProposedFile
+    word_class_type = models.CharField(max_length=100, db_column='word_class_type', null=True, blank=True)  # New field for word class type
 
     class Meta:
         db_table = 'proposed_text'
         managed = True
 
     def __str__(self):
-        return self.proposed_text 
-    
+        return self.proposed_text
 
+class ProposedFile(models.Model):
+    upload_id = models.CharField(max_length=25,primary_key=True, db_column='upload_id')
+    user = models.ForeignKey(Users, on_delete=models.CASCADE, db_column='user_id')
+    file_name = models.CharField(max_length=50, db_column='file_name')
+    file_type = models.CharField(max_length=5, db_column='file_type')
+    file_size = models.FloatField(db_column='file_size')
+    file_data = models.TextField(db_column='file_data')
+    uploaded_date = models.DateTimeField(auto_now_add=True, db_column='uploaded_date')
+    file_path = models.TextField(db_column='file_path')
+    text_id = models.ForeignKey(ProposedText, on_delete=models.CASCADE, db_column='proposed_text_id')  # Change this to ForeignKey
+
+    class Meta:
+        db_table = 'proposed_file'
+        managed = True
+
+    def __str__(self):
+        return self.file_name
 
