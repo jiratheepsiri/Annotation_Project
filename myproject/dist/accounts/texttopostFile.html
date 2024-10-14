@@ -80,16 +80,17 @@
               <form id="file-form2" enctype="multipart/form-data" method="post" action="{% url 'texttopostFile' %}">
                 {% csrf_token %}
                 <div class="mb-3">
-                  <label for="file-upload" class="form-label text-white">โปรดอัปโหลดไฟล์ (รองรับเฉพาะ .csv หรือ .xml)</label>
-                  <input type="file" class="form-control" id="file-upload2" name="file" accept=".csv, .xml" required />
+                    <label for="file-upload" class="form-label text-white">โปรดอัปโหลดไฟล์ (รองรับเฉพาะ .csv หรือ .xml)</label>
+                    <input type="file" class="form-control" id="file-upload2" name="file" accept=".csv, .xml" required />
                 </div>
                 {% if error_message %}
-                <div class="alert alert-danger" role="alert">
-                  {{ error_message }}
-                </div>
+                    <div class="alert alert-danger" role="alert">
+                        {{ error_message }}
+                    </div>
                 {% endif %}
                 <button id="submit-file-btn" type="submit" class="btn btn-success">ส่งไฟล์</button>
               </form>
+            
               
 
               <!-- Example Files Section -->
@@ -112,16 +113,16 @@
                     <div class="col-md-8 text-center">
                       <div id="csv-example" class="picEx">
                         <h4 class="text-white">ตัวอย่างไฟล์ CSV</h4>
-                        <img src="../static/assets/CSVFileEX.png" alt="CSV Example Image" class="img-fluid mb-3" />
+                        <img src="{% static 'assets/CSVFileEX.png' %}" alt="CSV Example Image" class="img-fluid mb-3" />
                         <br />
-                        <a href="path/to/example.csv" download class="btn btn-success">ดาวน์โหลดตัวอย่างไฟล์ CSV</a>
+                        <a href="{% static 'example_proposed_file/ตัวอย่างไฟล์CSV.csv' %}" download class="btn btn-success">ดาวน์โหลดตัวอย่างไฟล์ CSV</a>
                       </div>
 
                       <div id="xml-example" class="picEx" style="display: none">
                         <h4 class="text-white">ตัวอย่างไฟล์ XML</h4>
-                        <img src="../static/assets/XMLFileEx.png" alt="XML Example Image" class="img-fluid mb-3" />
+                        <img src="{% static 'assets/XMLFileEX.png' %}" alt="XML Example Image" class="img-fluid mb-3" />
                         <br />
-                        <a href="path/to/example.xml" download class="btn btn-success">ดาวน์โหลดตัวอย่างไฟล์ XML</a>
+                        <a href="{% static 'example_proposed_file/ตัวอย่างไฟล์XML.xml' %}" download class="btn btn-success">ดาวน์โหลดตัวอย่างไฟล์ XML</a>
                       </div>
                     </div>
                   </div>
@@ -144,44 +145,6 @@
         const csvExample = document.getElementById("csv-example");
         const xmlExample = document.getElementById("xml-example");
 
-        // File upload handling
-        fileForm.addEventListener("submit", function (event) {
-          event.preventDefault(); // Prevent the form from submitting normally
-
-          if (fileInput.files.length === 0) {
-            alert("กรุณาเลือกไฟล์ก่อนกดส่ง"); // Please select a file before submitting
-            return;
-          }
-
-          const file = fileInput.files[0];
-          const fileName = file.name;
-          const fileExtension = fileName.split(".").pop().toLowerCase();
-
-          if (fileExtension !== "csv" && fileExtension !== "xml") {
-            alert("กรุณาอัปโหลดไฟล์ .csv หรือ .xml เท่านั้น"); // Please upload only .csv or .xml files
-            fileInput.value = ""; // Clear the file input
-            return;
-          }
-
-          // If we've made it this far, the file is valid
-          alert("ไฟล์ถูกส่งเรียบร้อยแล้ว: " + fileName); // File submitted successfully: [filename]
-          // Here you would typically send the file to the server
-          // For demonstration, we're just showing an alert
-        });
-
-        // File input change event for immediate feedback
-        fileInput.addEventListener("change", function () {
-          if (this.files.length > 0) {
-            const file = this.files[0];
-            const fileName = file.name;
-            const fileExtension = fileName.split(".").pop().toLowerCase();
-
-            if (fileExtension !== "csv" && fileExtension !== "xml") {
-              alert("กรุณาเลือกไฟล์ .csv หรือ .xml เท่านั้น"); // Please select only .csv or .xml files
-              this.value = ""; // Clear the file input
-            }
-          }
-        });
 
         // Toggle between CSV and XML examples
         csvButton.addEventListener("click", function () {
