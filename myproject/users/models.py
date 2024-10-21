@@ -25,6 +25,10 @@ class Users(models.Model):
     username = models.CharField(max_length=150, unique=True, db_column='user_username')
     password = models.CharField(max_length=255, db_column='user_pwd')
     last_login = models.DateTimeField(null=True, blank=True, db_column='last_login')
+    email = models.EmailField(max_length=255, unique=True, db_column='user_email')
+    tel = models.CharField(max_length=10,db_column='user_tel')
+    user_fname = models.CharField(max_length=50,db_column='user_fname')
+    user_lname = models.CharField(max_length=50,db_column='user_lname')
 
     class Meta:
         db_table = 'user'  # Use your actual table name in MySQL

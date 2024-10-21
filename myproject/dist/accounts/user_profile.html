@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -24,14 +25,14 @@
       rel="stylesheet"
     />
     <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="../static/css/styles.css" rel="stylesheet" />
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet" />
   </head>
 
   <body class="d-flex flex-column h-100 bg-dark">
     <!-- Navigation-->
     <nav class="navbar navbar-expand-lg navbar-light py-3 bg-greydarker">
       <div class="container px-5">
-        <a class="navbar-brand" href="../dist/index.html">
+        <a class="navbar-brand" href="{% url 'mainlogin' %}">
           <span class="fw-bolder border-rounded" style="color: black">
             ระบบการกำกับข้อความเชิงบูลลี่ภาษาไทย
           </span>
@@ -49,36 +50,21 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0 small fw-bolder">
-            <li class="nav-item">
-              <a class="nav-link" href="mainlogin.html">หน้าแรก</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="annotatepage.html">กำกับข้อความ</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="txtverify.html">วิเคราะห์ข้อความ</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="texttopost.html">เสนอข้อความ</a>
-            </li>
-          </ul>
+            <li class="nav-item"><a class="nav-link" href="{% url 'mainlogin' %}">หน้าแรก</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'annotatepage' %}">กำกับข้อความ</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'txtverify' %}">วิเคราะห์ข้อความ</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'texttopost' %}">เสนอข้อความ</a></li>
+        </ul>
           <div class="user-profile-box m-lg-0 py-1">
             <div class="d-inline-flex align-items-center">
-              <img
-                src="../static/assets/profile-placeholder.png"
-                alt="User Picture"
-                style="width: 40px; height: 40px; cursor: pointer"
-                class="rounded-circle me-2"
-                onclick="location.href='../dist/user-profile.html';"
-              />
-              <div class="d-md-flex flex-column">
-                <span class="fw-medium" style="color: black; cursor: pointer"
-                  >ชื่อผู้ใช้: saya9833 (A01)</span
-                >
-                <a href="#" class="d-block fw-semibold text-danger"
-                  >ออกจากระบบ</a
-                >
-              </div>
+                <img src="{% static 'assets/profile-placeholder.png' %}" alt="User Picture"
+                    style="width: 40px; height: 40px; cursor: pointer" class="rounded-circle me-2"
+                    onclick="location.href='{% url 'user_profile' %}';" />
+          
+                <div class="d-md-flex flex-column">
+                    <span class="fw-medium" style="color: black; cursor: pointer">ชื่อผู้ใช้: {{ username }}</span>
+                    <a href="{% url 'index' %}" class="d-block fw-semibold text-danger">ออกจากระบบ</a>
+                </div>
             </div>
           </div>
         </div>
@@ -93,17 +79,17 @@
               <div class="d-inline-flex align-items-center">
                 <img
                   class="rounded-circle"
-                  src="../static/assets/profile-placeholder.png"
+                  src="{% static 'assets/profile-placeholder.png' %}"
                   alt="..."
                   style="width: 80px; height: 80px"
                 />
               </div>
               <div class="d-md-flex flex-column offset-1">
                 <span class="fw-medium text-white" style="color: black"
-                  >ชื่อผู้ใช้: saya9833</span
+                  >ชื่อผู้ใช้: {{ username }}</span
                 >
                 <span class="fw-medium text-white" style="color: black"
-                  >รหัสผู้ใช้: A01</span
+                  >รหัสผู้ใช้: {{ user_id }}</span
                 >
               </div>
             </div>
@@ -111,13 +97,15 @@
               <button
                 class="btn btn-light d-flex align-items-center"
                 type="button"
-                onclick="location.href='../dist/edit-profile.html';"
+                onclick="location.href='{% url 'edit_profile' %}';"
               >
                 <i class="bi bi-tools me-2"></i> แก้ไขบัญชี
               </button>
+              
               <button
                 class="btn btn-light d-flex align-items-center"
                 type="button"
+                
               >
                 <i class="bi bi-clock-history me-2"></i> ประวัติการนำเสนอข้อความ
               </button>
@@ -147,7 +135,7 @@
                 <div class="col-lg-3">
                   <img
                     class="rounded-circle mb-3"
-                    src="../static/assets/profile-placeholder.png"
+                    src="{% static 'assets/profile-placeholder.png' %}"
                     alt="Profile Picture"
                     style="
                       width: 200px;
@@ -157,16 +145,16 @@
                 </div>
                 <div class="text-center text-lg-start col-lg-9 pe-4">
                   <span class="fw-medium text-white fs-5" style="color: black"
-                    >รหัสผู้ใช้: A01</span
+                    >รหัสผู้ใช้: {{ user_id }}</span
                   ><br />
                   <span class="fw-medium text-white fs-5" style="color: black"
-                    >สวัสดี คงมั่นยืน</span
+                    >ชื่อ: {{ user_fname }} {{ user_lname }}</span
                   ><br />
                   <span class="fw-medium text-white fs-5" style="color: black"
-                    >อีเมล : veera1994@gmail.com </span
+                    >อีเมล : {{ email }} </span
                   ><br />
                   <span class="fw-medium text-white fs-5" style="color: black"
-                    >เบอร์ : 095-141-4489</span
+                    >เบอร์โทรศัพท์ : {{ tel }}</span
                   >
                 </div>
               </div>
