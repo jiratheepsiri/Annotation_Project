@@ -32,10 +32,27 @@ def edit_profile(request):
         print(f"Authenticated user: {request.user.username}")  # Debugging line
         return render(request, 'accounts/edit_profile.html', {
             'username': request.user.username,
+            'user_id': request.user.user_id,
+            'email' : request.user.email
         })
     else:
         return redirect('login')  # Redirect to login page if not authenticated
 
+def user_profile(request):
+    if request.user.is_authenticated:  # This works if you add is_authenticated property in Users model
+        print(f"Authenticated user: {request.user.username}")  # Debugging line
+        return render(request, 'accounts/user_profile.html', {
+            'username': request.user.username,
+            'user_id': request.user.user_id,
+            'email' : request.user.email,
+            'tel' : request.user.tel,
+            'user_lname' : request.user.user_lname,
+            'user_fname' : request.user.user_fname
+
+        })
+    else:
+        return redirect('login')  # Redirect to login page if not authenticated
+    
 
 def login_view(request):
     msg = None
@@ -109,7 +126,6 @@ def texttopost(request):
                 proposed_text=proposed_text,
                 word_class=word_class,
                 word_status=word_status,
-                proposed_t_admin_id=None,  # Allowing NULL value
             )
 
             try:

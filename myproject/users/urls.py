@@ -15,5 +15,6 @@ urlpatterns = [
     path('login/accounts/txtverifyFile/', views.txtverifyFile, name='txtverifyFile'),
     path('registration/', views.registration, name='registration'),
     path('login/accounts/annotateselect/', views.annotateselect, name='annotateselect'),
-    path('login/accounts/edit_profile/', views.edit_profile, name='edit_profile')
+    path('login/accounts/edit_profile/', views.edit_profile, name='edit_profile'),
+    path('login/accounts/user_profile/', views.user_profile, name='user_profile')
 ]
