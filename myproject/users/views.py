@@ -28,31 +28,69 @@ def index(request):
     return render(request, 'index.html')  # แสดงหน้า home.html
 
 def edit_profile(request):
-    if request.user.is_authenticated:  # This works if you add is_authenticated property in Users model
-        print(f"Authenticated user: {request.user.username}")  # Debugging line
-        return render(request, 'accounts/edit_profile.html', {
-            'username': request.user.username,
-            'user_id': request.user.user_id,
-            'email' : request.user.email
-        })
+    if request.user.is_authenticated:
+            if request.method == 'POST':
+                # Get the current authenticated user
+                user = request.user
+
+                # Fetch data from the form
+                user_fname = request.POST.get('user_fname', '').strip()  # Use empty string if not provided
+                user_lname = request.POST.get('user_lname', '').strip()
+                email = request.POST.get('email', '').strip()
+                tel = request.POST.get('tel', '').strip()
+
+                # Update the user's data
+                try:
+                    user.user_fname = user_fname  # Safely update even if the field was empty before
+                    user.user_lname = user_lname
+                    user.email = email
+                    user.tel = tel  # Assuming the 'tel' field exists in your Users model
+
+                    # Save changes to the database
+                    user.save()
+
+                    # Send a success message
+                    messages.success(request, "Profile updated successfully!")
+                    return redirect('user_profile')  # Redirect to a profile page after saving
+                except Exception as e:
+                    # If something goes wrong, send an error message
+                    messages.error(request, f"Error updating profile: {str(e)}")
+                    return redirect('edit_profile')
+
+            # For GET request, display the current data with default empty values if fields are None
+            return render(request, 'accounts/edit_profile.html', {
+                'username': request.user.username,
+                'user_fname': request.user.user_fname or '',  # Use empty string if first_name is None
+                'user_lname': request.user.user_lname or '',   # Use empty string if last_name is None
+                'email': request.user.email or '',
+                'tel': request.user.tel or ''  # Use empty string if tel is None
+            })
     else:
         return redirect('login')  # Redirect to login page if not authenticated
 
 def user_profile(request):
-    if request.user.is_authenticated:  # This works if you add is_authenticated property in Users model
-        print(f"Authenticated user: {request.user.username}")  # Debugging line
-        return render(request, 'accounts/user_profile.html', {
-            'username': request.user.username,
-            'user_id': request.user.user_id,
-            'email' : request.user.email,
-            'tel' : request.user.tel,
-            'user_lname' : request.user.user_lname,
-            'user_fname' : request.user.user_fname
+    if request.user.is_authenticated:
+        user = request.user
 
+        # Count the texts where the current user has proposed
+        proposed_text_count = ProposedText.objects.filter(user=user).count()
+
+        # Count texts that the user supervised (assuming some field tracks this, like word_status)
+        supervised_text_count = ProposedText.objects.filter(user=user, word_status='กำกับแล้ว').count()  # Adjust the condition as needed
+
+        return render(request, 'accounts/user_profile.html', {
+            'username': user.username,
+            'user_id': user.user_id,
+            'email': user.email,
+            'tel': user.tel,
+            'user_lname': user.user_lname,
+            'user_fname': user.user_fname,
+            'proposed_text_count': proposed_text_count,  # Pass the count of proposed texts
+            'supervised_text_count': supervised_text_count  # Pass the count of supervised texts
         })
     else:
-        return redirect('login')  # Redirect to login page if not authenticated
-    
+        return redirect('login')
+
 
 def login_view(request):
     msg = None

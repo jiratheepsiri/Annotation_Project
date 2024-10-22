@@ -62,11 +62,11 @@
                 alt="User Picture"
                 style="width: 40px; height: 40px; cursor: pointer"
                 class="rounded-circle me-2"
-                onclick="location.href='{% url 'edit_profile' %}';"
+                onclick="location.href='{% url 'user_profile' %}';"
               />
               <div class="d-md-flex flex-column">
                 <span class="fw-medium" style="color: black; cursor: pointer"
-                  >ชื่อผู้ใช้: saya9833 (A01)</span
+                  >ชื่อผู้ใช้: {{ username }}</span
                 >
                 <a href="#" class="d-block fw-semibold text-danger"
                   >ออกจากระบบ</a
@@ -152,93 +152,30 @@
                     onmouseout="this.style.transform='scale(1)';"
                   />
                 </div>
-                <form class="text-center text-lg-start col-lg-9 pe-4">
+                <form class="text-center text-lg-start col-lg-9 pe-4" method="POST">
+                  {% csrf_token %}
                   <div class="mb-3">
-                    <label
-                      for="userId"
-                      class="form-label text-white fs-5"
-                      style="color: black"
-                      >รหัสผู้ใช้</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="userId"
-                      value="A01"
-                    />
+                    <label for="user_fname" class="form-label text-white fs-5" style="color: black">ชื่อจริง</label>
+                    <input type="text" class="form-control" id="user_fname" name="user_fname" value="{{ user_fname }}" />
                   </div>
                   <div class="mb-3">
-                    <label
-                      for="userName"
-                      class="form-label text-white fs-5"
-                      style="color: black"
-                      >ชื่อผู้ใช้</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="userName"
-                      value="คงมั่นยืน"
-                    />
+                    <label for="user_lname" class="form-label text-white fs-5" style="color: black">นามสกุล</label>
+                    <input type="text" class="form-control" name="user_lname" id="user_lname" value="{{ user_lname }}" />
                   </div>
                   <div class="mb-3">
-                    <label
-                      for="email"
-                      class="form-label text-white fs-5"
-                      style="color: black"
-                      >อีเมล</label
-                    >
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="email"
-                      value="veera1994@gmail.com"
-                    />
+                    <label for="email" class="form-label text-white fs-5" style="color: black">อีเมล</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{{ email }}" />
                   </div>
                   <div class="mb-3">
-                    <label
-                      for="phone"
-                      class="form-label text-white fs-5"
-                      style="color: black"
-                      >เบอร์</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="phone"
-                      value="095-141-4489"
-                    />
+                    <label for="phone" class="form-label text-white fs-5" style="color: black">เบอร์</label>
+                    <input type="text" class="form-control" id="phone" name="tel" value="{{ tel }}" />
+                  </div>
+                  <div class="col-lg-12 mt-4"> 
+                    <div class="d-flex justify-content-center">
+                      <button type="submit" class="btn btn-primary mt-4">บันทึก</button>
+                    </div>
                   </div>
                 </form>
-              </div>
-              <div class="col-lg-12 mt-4">
-                <label for="description" class="form-label text-white"
-                  >คำอธิบาย</label
-                >
-                <textarea
-                  id="description"
-                  class="form-control"
-                  rows="4"
-                  style="width: 100%"
-                >สวัสดีฉันชื่อวีรยาฉันมีประสบการณ์ไม่ค่อยดีเท่าไหร่กับการใช้คำพูดของคนบางกลุ่ม</textarea
-                >
-                <div class="d-flex justify-content-center">
-                  <button type="submit" class="btn btn-primary mt-4">บันทึก</button>
-                </div>
-              </div>
-              <div class="row mt-4 justify-content-center">
-                <div class="col-lg-6">
-                  <div class="bg-white p-2 rounded text-center">
-                    <h5 class="text-dark fw-bolder fs-2">157</h5>
-                    <p class="text-dark fw-medium">ข้อความที่นำเสนอ</p>
-                  </div>
-                </div>
-                <div class="col-lg-6">
-                  <div class="bg-white p-2 rounded text-center">
-                    <h5 class="text-dark fw-bolder fs-2">24</h5>
-                    <p class="text-dark fw-medium">ข้อความที่ทำการกำกับ</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
